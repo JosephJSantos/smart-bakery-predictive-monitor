@@ -1,15 +1,18 @@
+import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-def train_model(df):
-    df["time_index"] = range(len(df))
-    X = df[["time_index"]]
-    y = df["temperature"]
+
+def train_model(df: pd.DataFrame) -> LinearRegression:
+    """Treina uma regressão linear para estimar a tendência da temperatura."""
+    x = np.arange(len(df)).reshape(-1, 1)
+    y = df["temperature"].to_numpy()
     model = LinearRegression()
-    model.fit(X, y)
+    model.fit(x, y)
     return model
 
-def predict_future(model, future_steps=10, last_index=0):
-    future_index = [[last_index + i] for i in range(1, future_steps+1)]
-    preds = model.predict(future_index)
-    return preds
+
+def predict_future(model: LinearRegression, future_steps: int = 10, last_index: int = 0) -> np.ndarray:
+    """Prevê as próximas leituras com base no índice temporal."""
+    future_index = np.arange(last_index + 1, last_index + future_steps + 1).reshape(-1, 1)
+    return model.predict(future_index)
