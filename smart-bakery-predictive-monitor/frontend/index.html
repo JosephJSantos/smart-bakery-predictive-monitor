@@ -1,15 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>Smart Bakery Monitor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Bakery | Monitoramento Preditivo</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <h1>Monitoramento Preditivo</h1>
-  <div id="status">Status: Normal</div>
-  <canvas id="chart"></canvas>
-  <button onclick="loadData()">Atualizar</button>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="script.js"></script>
+  <main class="container">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">SMART BAKERY · PROJETO INTEGRADOR 4</p>
+        <h1>Monitoramento preditivo</h1>
+        <p class="subtitle">Leituras simuladas de sensores IoT e previsão de temperatura</p>
+      </div>
+      <button id="refreshButton" class="button secondary">Atualizar dados</button>
+    </header>
+
+    <section class="status-panel" aria-live="polite">
+      <div id="statusDot" class="status-dot"></div>
+      <div>
+        <strong id="statusTitle">Conectando à API…</strong>
+        <p id="statusDescription">Carregando leituras e previsões.</p>
+      </div>
+      <span id="updatedAt" class="updated"></span>
+    </section>
+
+    <section class="metrics" aria-label="Indicadores atuais">
+      <article class="metric-card">
+        <p>Temperatura atual</p>
+        <div><strong id="currentTemp">—</strong><span>°C</span></div>
+        <small>Última leitura do sensor</small>
+      </article>
+      <article class="metric-card">
+        <p>Umidade atual</p>
+        <div><strong id="currentHumidity">—</strong><span>%</span></div>
+        <small>Última leitura do sensor</small>
+      </article>
+      <article class="metric-card">
+        <p>Máxima prevista</p>
+        <div><strong id="predictedTemp">—</strong><span>°C</span></div>
+        <small>Estimativa para as próximas 10 leituras</small>
+      </article>
+      <article class="metric-card">
+        <p>Leituras analisadas</p>
+        <div><strong id="recordCount">—</strong></div>
+        <small>Histórico usado na visualização</small>
+      </article>
+    </section>
+
+    <section class="chart-card">
+      <div class="section-heading">
+        <div>
+          <h2>Histórico e previsão de temperatura</h2>
+          <p>Últimas leituras e tendência estimada pelo modelo de regressão linear.</p>
+        </div>
+        <button id="simulateButton" class="button primary">Gerar novas leituras</button>
+      </div>
+      <div class="chart-wrap"><canvas id="chart" aria-label="Gráfico de temperatura histórica e prevista"></canvas></div>
+      <p class="footnote">Dados sintéticos para fins acadêmicos. Limite de alerta demonstrativo: 10 °C.</p>
+    </section>
+
+    <footer>Smart Bakery Predictive Monitor · Dados simulados · Modelo: scikit-learn</footer>
+    <p id="errorMessage" class="error" role="alert"></p>
+  </main>
 </body>
 </html>
