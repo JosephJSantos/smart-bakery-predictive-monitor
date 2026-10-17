@@ -51,6 +51,39 @@
       </article>
     </section>
 
+    <section class="scenario-card">
+      <div class="section-heading scenario-heading">
+        <div>
+          <h2>Laboratório de cenários IoT</h2>
+          <p>Escolha valores extremos para simular uma mudança ambiental e observar a reação do modelo.</p>
+        </div>
+      </div>
+      <div class="scenario-controls">
+        <label>Temperatura alvo (°C)
+          <input id="scenarioTemp" type="number" min="-10" max="60" step="0.5" value="5">
+        </label>
+        <label>Umidade alvo (%)
+          <input id="scenarioHumidity" type="number" min="0" max="100" step="1" value="68">
+        </label>
+        <label>Novas leituras
+          <select id="scenarioReadings">
+            <option value="10">10 (mudança rápida)</option>
+            <option value="20" selected>20</option>
+            <option value="50">50 (mudança gradual)</option>
+          </select>
+        </label>
+        <button id="applyScenarioButton" class="button primary">Aplicar cenário</button>
+      </div>
+      <div class="preset-buttons">
+        <button class="button preset" data-preset="cold">Frio extremo</button>
+        <button class="button preset" data-preset="hot">Calor extremo</button>
+        <button class="button preset" data-preset="humid">Umidade alta</button>
+        <button class="button preset" data-preset="dry">Umidade baixa</button>
+        <button id="resetScenarioButton" class="button secondary">Restaurar dados normais</button>
+      </div>
+      <p class="footnote">Os cenários são artificiais e servem para testar o dashboard; não representam limites técnicos reais de uma padaria.</p>
+    </section>
+
     <section class="chart-card">
       <div class="section-heading">
         <div>
@@ -61,6 +94,16 @@
       </div>
       <div class="chart-wrap"><canvas id="chart" aria-label="Gráfico de temperatura histórica e prevista"></canvas></div>
       <p class="footnote">Dados sintéticos para fins acadêmicos. Limite de alerta demonstrativo: 10 °C.</p>
+    </section>
+
+    <section class="chart-card">
+      <div class="section-heading">
+        <div>
+          <h2>Histórico de umidade</h2>
+          <p>Variação da umidade relativa nas leituras recentes.</p>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="humidityChart" aria-label="Gráfico de umidade histórica"></canvas></div>
     </section>
 
     <footer>Smart Bakery Predictive Monitor · Dados simulados · Modelo: scikit-learn</footer>

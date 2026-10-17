@@ -26,7 +26,7 @@ h1 { font-size: clamp(28px, 4vw, 38px); margin: 0; letter-spacing: -.04em; }
 .button:disabled { cursor: wait; opacity: .6; }
 .primary { color: white; background: var(--blue); }
 .secondary { color: var(--ink); background: white; border: 1px solid var(--line); }
-.status-panel, .metric-card, .chart-card {
+.status-panel, .metric-card, .chart-card, .scenario-card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
 }
 .status-panel { display: flex; align-items: center; gap: 13px; margin: 28px 0 18px; padding: 16px 18px; }
@@ -43,7 +43,13 @@ h1 { font-size: clamp(28px, 4vw, 38px); margin: 0; letter-spacing: -.04em; }
 .metric-card strong { font-size: 32px; letter-spacing: -.04em; }
 .metric-card span { color: var(--muted); }
 .metric-card small { display: block; color: var(--muted); margin-top: 10px; line-height: 1.4; }
-.chart-card { margin-top: 18px; padding: 24px; }
+.chart-card, .scenario-card { margin-top: 18px; padding: 24px; }
+.scenario-heading { margin-bottom: 20px; }
+.scenario-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 14px; }
+.scenario-controls label { display: grid; gap: 7px; color: var(--muted); font-size: 13px; font-weight: 700; }
+.scenario-controls input, .scenario-controls select { width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px; background: white; color: var(--ink); font: inherit; }
+.preset-buttons { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.preset { color: var(--ink); background: #edf2fa; }
 h2 { margin: 0; font-size: 19px; }
 .section-heading p { font-size: 13px; line-height: 1.5; }
 .chart-wrap { position: relative; height: 350px; margin-top: 25px; }
@@ -53,6 +59,8 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px
 @media (max-width: 850px) {
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .topbar, .section-heading { align-items: flex-start; flex-direction: column; }
+  .scenario-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .scenario-controls .button { grid-column: 1 / -1; }
   .updated { display: none; }
 }
 @media (max-width: 480px) {
@@ -60,6 +68,8 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px
   .metrics { gap: 10px; }
   .metric-card { padding: 15px; }
   .metric-card strong { font-size: 27px; }
-  .chart-card { padding: 16px; }
+  .chart-card, .scenario-card { padding: 16px; }
+  .scenario-controls { grid-template-columns: 1fr; }
+  .scenario-controls .button { grid-column: auto; }
   .chart-wrap { height: 290px; }
 }

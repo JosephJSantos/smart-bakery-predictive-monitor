@@ -1,5 +1,6 @@
 const API_URL = "http://127.0.0.1:8000";
 let temperatureChart = null;
+let humidityChart = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -63,6 +64,40 @@ function renderChart(data, predictions) {
   });
 }
 
+function renderHumidityChart(data) {
+  const labels = data.map((row) => {
+    const date = new Date(row.timestamp);
+    return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  });
+  if (humidityChart) humidityChart.destroy();
+  humidityChart = new Chart($("humidityChart"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Umidade relativa (%)",
+        data: data.map((row) => row.humidity),
+        borderColor: "#168578",
+        backgroundColor: "rgba(22, 133, 120, 0.12)",
+        fill: true,
+        tension: 0.25,
+        pointRadius: 0,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: "index" },
+      plugins: { legend: { position: "bottom" } },
+      scales: {
+        x: { ticks: { maxTicksLimit: 10, maxRotation: 0 }, grid: { display: false } },
+        y: { min: 0, max: 100, title: { display: true, text: "Umidade relativa (%)" } }
+      }
+    }
+  });
+}
+
 function renderStatus(prediction) {
   const panel = document.querySelector(".status-panel");
   panel.classList.remove("ok", "alert");
@@ -94,6 +129,7 @@ async function loadData() {
     $("updatedAt").textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR")}`;
     renderStatus(prediction);
     renderChart(data, prediction);
+    renderHumidityChart(data);
   } catch (error) {
     $("statusTitle").textContent = "Não foi possível conectar à API";
     $("statusDescription").textContent = "Confira se o FastAPI está rodando em http://127.0.0.1:8000.";
@@ -115,6 +151,57 @@ async function simulateData() {
     $("simulateButton").disabled = false;
   }
 }
+
+async function applyScenario(temperature, humidity, readings) {
+  $("applyScenarioButton").disabled = true;
+  $("errorMessage").textContent = "";
+  try {
+    await api("/simulate/scenario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ temperature, humidity, readings })
+    });
+    await loadData();
+  } catch (error) {
+    $("errorMessage").textContent = `Não foi possível aplicar o cenário: ${error.message}`;
+  } finally {
+    $("applyScenarioButton").disabled = false;
+  }
+}
+
+$("applyScenarioButton").addEventListener("click", () => {
+  const temperature = Number($("scenarioTemp").value);
+  const humidity = Number($("scenarioHumidity").value);
+  const readings = Number($("scenarioReadings").value);
+  if (!Number.isFinite(temperature) || temperature < -10 || temperature > 60 ||
+      !Number.isFinite(humidity) || humidity < 0 || humidity > 100) {
+    $("errorMessage").textContent = "Use temperatura entre -10 e 60 °C e umidade entre 0 e 100%.";
+    return;
+  }
+  applyScenario(temperature, humidity, readings);
+});
+
+document.querySelectorAll("[data-preset]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const currentTemperature = Number($("currentTemp").textContent) || 5;
+    const currentHumidity = Number($("currentHumidity").textContent) || 68;
+    const presets = {
+      cold: { temperature: -5, humidity: currentHumidity },
+      hot: { temperature: 45, humidity: currentHumidity },
+      humid: { temperature: currentTemperature, humidity: 95 },
+      dry: { temperature: currentTemperature, humidity: 10 }
+    };
+    const preset = presets[button.dataset.preset];
+    $("scenarioTemp").value = preset.temperature;
+    $("scenarioHumidity").value = preset.humidity;
+    applyScenario(preset.temperature, preset.humidity, Number($("scenarioReadings").value));
+  });
+});
+
+$("resetScenarioButton").addEventListener("click", async () => {
+  if (!confirm("Isso vai substituir o histórico atual pelos dados sintéticos normais. Continuar?")) return;
+  await simulateData();
+});
 
 $("refreshButton").addEventListener("click", loadData);
 $("simulateButton").addEventListener("click", simulateData);
